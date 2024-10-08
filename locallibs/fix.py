@@ -55,7 +55,9 @@ def relativize_interpreter_path(framework_path, script_dir, shebang_line):
         original_path = original_path.replace(
             default_framework_path, current_framework_path, 1)
     return os.path.relpath(
-        original_path, os.path.abspath(script_dir).encode("UTF-8"))
+        os.path.realpath(original_path),
+        os.path.realpath(script_dir).encode("UTF-8")
+    )
 
 
 def is_framework_shebang(framework_path, text):
@@ -63,8 +65,10 @@ def is_framework_shebang(framework_path, text):
     referencing the framework_path or the default
     /Library/Frameworks/Python.framework path"""
     this_framework_shebang = b"#!" + os.path.abspath(framework_path).encode("UTF-8")
+    real_framework_shebang = b"#!" + os.path.realpath(framework_path).encode("UTF-8")
     prefixes = [
         this_framework_shebang,
+        real_framework_shebang,
         b"#!/Library/Frameworks/Python.framework",
         b"#!/Library/Developer/CommandLineTools/usr/bin/python3",
         b"#!/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
